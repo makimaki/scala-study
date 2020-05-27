@@ -1,0 +1,4 @@
+POST        /webhook/:clientId/:integrationId controllers.LineController.webhook(clientId, integrationId)
+
+## Health Check
+GET         /status                                       controllers.HealthCheckController.ok(all = "")
