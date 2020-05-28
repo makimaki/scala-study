@@ -1,21 +1,19 @@
 package infrastructure
 
-import javax.inject.Inject
-
 import io.LineConfig
 import io.reply._
 import play.api.libs.json.Json
-import play.api.libs.ws.{WSClient, WSResponse}
+import play.api.libs.ws.JsonBodyWritables._
+import play.api.libs.ws.{StandaloneWSClient, StandaloneWSRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LineClient @Inject() (
-  ws: WSClient
-) {
+class LineClient(ws: StandaloneWSClient) {
+
   def reply(request: Request)(implicit
     ec: ExecutionContext,
     lineConfig: LineConfig
-  ): Future[WSResponse] =
+  ): Future[StandaloneWSRequest#Self#Response] =
     ws.url(lineConfig.ReplyApiEndpoint)
       .withHttpHeaders(
         "Authorization" -> s"Bearer ${lineConfig.channelAccessToken}",

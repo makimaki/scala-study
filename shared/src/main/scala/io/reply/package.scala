@@ -1,9 +1,8 @@
 package io
 
-import io.reply._
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json._
 
-object Serializer {
+package object reply {
   implicit val w: Writes[Request] = (o: Request) =>
     Json.obj(
       "replyToken" -> o.replyToken,
@@ -63,8 +62,9 @@ object Serializer {
       Json.obj(
         "type" -> "postback",
         "label" -> o.label,
-        "displayText" -> o.displayText.getOrElse(o.label).toString,
         "data" -> o.data
+      ) ++ JsObject(
+        o.displayText.toSeq.map(JsString).map("displayText" -> _)
       )
   }
 

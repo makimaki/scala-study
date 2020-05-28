@@ -59,6 +59,7 @@ lazy val shared = Project(id = "shared", base = file("./shared"))
   .settings(
     libraryDependencies ++= Seq(
       // @formatter:off
+      "com.typesafe.play" %% "play-json" % "2.8.1"
       // @formatter:on
     )
   )
@@ -78,6 +79,7 @@ lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
     libraryDependencies ++= Seq(
       // @formatter:off
       "com.typesafe.play"            %% "play-ahc-ws-standalone"             % "2.1.2",
+      "com.typesafe.play"            %% "play-ws-standalone-json"            % "2.1.2",
       "org.eclipse.jetty"             % "jetty-webapp"                       % "9.4.29.v20200521",
       "javax.servlet"                 % "javax.servlet-api"                  % "4.0.1",
       "org.scalatra"                 %% "scalatra"                           % "2.7.0"
@@ -112,8 +114,7 @@ lazy val messageApi = Project(id = "play", base = file("./play"))
     libraryDependencies ++= Seq(
       // @formatter:off
       ws,
-      guice,
-      "com.typesafe.play" %% "play-json" % "2.8.1"
+      guice
       // @formatter:on
     )
   )

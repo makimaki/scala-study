@@ -4,11 +4,11 @@ import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 import infrastructure.LineClient
-import io.Deserializer._
 import io.LineConfig
-import io.webhook.Request
+import io.webhook._
 import play.api.libs.json.Json
 import play.api.mvc.InjectedController
+import service.WebhookHandler.Framework
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,6 +23,7 @@ class LineController @Inject() (
   def webhook(clientId: String, integrationId: String) =
     Action.async(unicodeTextParser) { implicit req =>
       implicit val config: LineConfig = LineConfig.fromEnv
+      implicit val framework: Framework = Framework.Play
 
       if (validator.validate(req.headers(config.SignatureHeaderName), req.body)) {
         val parsed = Json.parse(req.body).as[Request]

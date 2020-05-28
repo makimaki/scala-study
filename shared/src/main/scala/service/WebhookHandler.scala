@@ -5,12 +5,16 @@ import io.{LineConfig, reply, webhook}
 import scala.concurrent.ExecutionContext
 
 class WebhookHandler {
-  def handle(request: webhook.Request)(implicit ec: ExecutionContext, lineConfig: LineConfig): Iterator[reply.Request] =
+  import WebhookHandler._
+
+  def handle(
+    request: webhook.Request
+  )(implicit ec: ExecutionContext, lineConfig: LineConfig, framework: Framework): Iterator[reply.Request] =
     request.events.iterator.flatMap {
       case webhook.MessageEvent(_, _, replyToken, message) =>
         val replyMessages = message match {
           case webhook.TextMessage(_, "あなたは誰ですか？") =>
-            reply.TextMessage("私は scala(play) で実装された何かです。") +: Nil
+            reply.TextMessage(s"私は scala(${framework.name}) で実装された何かです。") +: Nil
           case webhook.TextMessage(_, text) =>
             reply.TextMessage(s"$text ですね。わかります。") +: Nil
           case webhook.LocationMessage(_, title, _, latitude, longitude) =>
@@ -52,4 +56,12 @@ class WebhookHandler {
       case _ =>
         None
     }
+}
+
+object WebhookHandler {
+  sealed abstract class Framework(val name: String)
+  object Framework {
+    case object Play extends Framework("play")
+    case object Scalatra extends Framework("scalatra")
+  }
 }

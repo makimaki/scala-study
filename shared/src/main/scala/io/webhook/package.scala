@@ -1,9 +1,8 @@
 package io
 
-import io.webhook._
 import play.api.libs.json._
 
-object Deserializer {
+package object webhook {
   private implicit val eventReads: Reads[Event] = EventDeserializer.r
 
   implicit val r: Reads[Request] = Json.reads[Request]

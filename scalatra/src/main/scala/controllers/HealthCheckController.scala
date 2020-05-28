@@ -12,7 +12,7 @@ class HealthCheckController(system: ActorSystem) extends ScalatraServlet with Fu
   get("/") {
     new AsyncResult {
       val is =
-        Future.successful(Ok)
+        Future.successful(Ok())
     }
   }
 
