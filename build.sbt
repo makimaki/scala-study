@@ -6,8 +6,12 @@ lazy val AllTest = "test,it"
 
 lazy val AllConfigurations = "test->test;it->test;it->it;compile->compile"
 
+lazy val scala213 = "2.13.2"
+lazy val scala211 = "2.11.12"
+lazy val supportedScalaVersions = List(scala213, scala211)
 lazy val scalaSettings = Seq(
-  scalaVersion := "2.13.2"
+  scalaVersion := scala213,
+  crossScalaVersions := supportedScalaVersions
 )
 
 lazy val commonSettings = scalaSettings ++ testSettings ++ itSettings ++ Seq(
@@ -58,9 +62,7 @@ lazy val shared = Project(id = "shared", base = file("./shared"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      // @formatter:off
       "com.typesafe.play" %% "play-json" % "2.8.1"
-      // @formatter:on
     )
   )
 
@@ -77,19 +79,16 @@ lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
     test in assembly := {},
     containerPort := 9000,
     libraryDependencies ++= Seq(
-      // @formatter:off
-      "com.typesafe.play"            %% "play-ahc-ws-standalone"             % "2.1.2",
-      "com.typesafe.play"            %% "play-ws-standalone-json"            % "2.1.2",
-      "org.eclipse.jetty"             % "jetty-webapp"                       % "9.4.29.v20200521",
-      "javax.servlet"                 % "javax.servlet-api"                  % "4.0.1",
-      "org.scalatra"                 %% "scalatra"                           % "2.7.0"
-      // @formatter:on
+      "com.typesafe.play" %% "play-ahc-ws-standalone" % "2.1.2",
+      "com.typesafe.play" %% "play-ws-standalone-json" % "2.1.2",
+      "org.eclipse.jetty" % "jetty-webapp" % "9.4.29.v20200521",
+      "javax.servlet" % "javax.servlet-api" % "4.0.1",
+      "org.scalatra" %% "scalatra" % "2.7.0"
     ),
     // ライブラリ依存関係が重複している際に解決するためのルールを設定
     // 参考: http://qiita.com/ytanak/items/97ecc67786ed7c5557bb
     assemblyMergeStrategy in assembly := {
-      // @formatter:off
-      case PathList("javax", "servlet", _ @ _*)                => MergeStrategy.first
+      case PathList("javax", "servlet", _ @_*)                 => MergeStrategy.first
       case PathList(ps @ _*) if ps.last endsWith ".properties" => MergeStrategy.first
       case PathList(ps @ _*) if ps.last endsWith ".xml"        => MergeStrategy.first
       case PathList(ps @ _*) if ps.last endsWith ".types"      => MergeStrategy.first
@@ -100,7 +99,6 @@ lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value
         oldStrategy(x)
-      // @formatter:on
     }
   )
 
@@ -112,9 +110,18 @@ lazy val messageApi = Project(id = "play", base = file("./play"))
     commonSettings,
     packageName in Universal := "scala-study-play",
     libraryDependencies ++= Seq(
-      // @formatter:off
       ws,
       guice
-      // @formatter:on
+    )
+  )
+
+lazy val gatling = Project(id = "gatling", base = file("./gatling"))
+  .enablePlugins(GatlingPlugin)
+  .settings(
+    scalaVersion := "2.12.11",
+    scalafmtOnCompile in ThisBuild := true,
+    libraryDependencies ++= Seq(
+      "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.3.1" % "test,it",
+      "io.gatling"            % "gatling-test-framework"    % "3.3.1" % "test,it"
     )
   )
