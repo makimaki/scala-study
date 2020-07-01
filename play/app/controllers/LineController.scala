@@ -28,7 +28,10 @@ class LineController @Inject() (
       if (validator.validate(req.headers(config.SignatureHeaderName), req.body)) {
         val parsed = Json.parse(req.body).as[Request]
         val replyIter = handler.handle(parsed)
-        Future.sequence(replyIter.map(lineClient.reply)).map(_ => Ok)
+        if (config.replyApiEndpoint == "direct")
+          Future.successful(Ok(Json.toJson(replyIter.toList.head)))
+        else
+          Future.sequence(replyIter.map(lineClient.reply)).map(_ => Ok)
       } else
         Future.successful(Ok)
     }

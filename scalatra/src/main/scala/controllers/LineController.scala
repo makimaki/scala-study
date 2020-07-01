@@ -31,7 +31,10 @@ class LineController(system: ActorSystem, lineClient: LineClient, handler: Webho
         if (validator.validate(request.getHeader(config.SignatureHeaderName), request.body)) {
           val parsed = Json.parse(request.body).as[Request]
           val replyIter = handler.handle(parsed)
-          Future.sequence(replyIter.map(lineClient.reply)).map(_ => Ok())
+          if (config.replyApiEndpoint == "direct")
+            Future.successful(Ok(Json.toJson(replyIter.toList.head)))
+          else
+            Future.sequence(replyIter.map(lineClient.reply)).map(_ => Ok())
         } else
           Future.successful(Ok())
       }

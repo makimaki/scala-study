@@ -2,10 +2,10 @@ package io
 
 case class LineConfig(
   channelAccessToken: String,
-  channelSecret: String
+  channelSecret: String,
+  replyApiEndpoint: String
 ) {
   final val SignatureHeaderName = "X-Line-Signature"
-  final val ReplyApiEndpoint = "https://api.line.me/v2/bot/message/reply"
 }
 
 object LineConfig {
@@ -18,6 +18,10 @@ object LineConfig {
       channelSecret = sys.env.getOrElse(
         "LINE_CHANNEL_SECRET",
         throw new IllegalArgumentException("required environment variable: LINE_CHANNEL_SECRET")
+      ),
+      replyApiEndpoint = sys.env.getOrElse(
+        "LINE_REPLY_API_ENDPOINT",
+        throw new IllegalArgumentException("required environment variable: LINE_REPLY_API_ENDPOINT")
       )
     )
 }

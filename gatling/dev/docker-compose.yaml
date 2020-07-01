@@ -1,0 +1,8 @@
+dummy_api:
+  image: node:10.16.2-stretch-slim
+  ports:
+    - "8989:8989"
+  volumes:
+    - "./dummy-api:/tmp"
+  working_dir: '/tmp'
+  command: [npm, run, serve]

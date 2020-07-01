@@ -16,7 +16,7 @@ class LineClient @Inject() (
     ec: ExecutionContext,
     lineConfig: LineConfig
   ): Future[WSResponse] =
-    ws.url(lineConfig.ReplyApiEndpoint)
+    ws.url(lineConfig.replyApiEndpoint)
       .withHttpHeaders(
         "Authorization" -> s"Bearer ${lineConfig.channelAccessToken}",
         "Content-Type" -> "application/json"

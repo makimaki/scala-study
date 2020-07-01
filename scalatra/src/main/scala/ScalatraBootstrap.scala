@@ -1,7 +1,8 @@
 import javax.servlet.ServletContext
 
 import akka.actor.ActorSystem
-import akka.stream.{Materializer, SystemMaterializer}
+//import akka.stream.{Materializer, SystemMaterializer}
+import akka.stream.{ActorMaterializer, Materializer}
 import controllers.{HealthCheckController, LineController}
 import infrastructure.LineClient
 import org.scalatra.LifeCycle
@@ -10,12 +11,13 @@ import service.WebhookHandler
 
 class ScalatraBootstrap extends LifeCycle {
 
-  val system: ActorSystem = ActorSystem()
+  implicit val system: ActorSystem = ActorSystem()
   system.registerOnTermination {
     System.exit(0)
   }
 
-  implicit val materializer: Materializer = SystemMaterializer(system).materializer
+//  implicit val materializer: Materializer = SystemMaterializer(system).materializer
+  implicit val materializer: Materializer = ActorMaterializer()
 
   val wsClient: StandaloneAhcWSClient = StandaloneAhcWSClient()
 

@@ -4,11 +4,10 @@ cancelable in Global := true
 
 lazy val AllTest = "test,it"
 
-lazy val AllConfigurations = "test->test;it->test;it->it;compile->compile"
-
 lazy val scala213 = "2.13.2"
+lazy val scala212 = "2.12.11"
 lazy val scala211 = "2.11.12"
-lazy val supportedScalaVersions = List(scala213, scala211)
+lazy val supportedScalaVersions = List(scala213, scala212, scala211)
 lazy val scalaSettings = Seq(
   scalaVersion := scala213,
   crossScalaVersions := supportedScalaVersions
@@ -62,14 +61,15 @@ lazy val shared = Project(id = "shared", base = file("./shared"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play-json" % "2.8.1"
+//      "com.typesafe.play" %% "play-json" % "2.8.1"
+      "com.typesafe.play" %% "play-json" % "2.7.4"
     )
   )
 
 /** Scalatra */
 lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
   .enablePlugins(JettyPlugin)
-  .dependsOn(shared % AllConfigurations)
+  .dependsOn(shared)
   .settings(
     commonSettings,
     // HACK: commonSettings(itSettings) で Play Framework の構成に合わせてしまっているので、元に戻す
@@ -79,11 +79,14 @@ lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
     test in assembly := {},
     containerPort := 9000,
     libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play-ahc-ws-standalone" % "2.1.2",
-      "com.typesafe.play" %% "play-ws-standalone-json" % "2.1.2",
+//      "com.typesafe.play" %% "play-ahc-ws-standalone" % "2.1.2",
+//      "com.typesafe.play" %% "play-ws-standalone-json" % "2.1.2",
+      "com.typesafe.play" %% "play-ahc-ws-standalone" % "2.0.8",
+      "com.typesafe.play" %% "play-ws-standalone-json" % "2.0.8",
       "org.eclipse.jetty" % "jetty-webapp" % "9.4.29.v20200521",
-      "javax.servlet" % "javax.servlet-api" % "4.0.1",
-      "org.scalatra" %% "scalatra" % "2.7.0"
+      "javax.servlet" % "javax.servlet-api" % "3.1.0",
+      "org.scalatra" %% "scalatra" % "2.7.0",
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
     ),
     // ライブラリ依存関係が重複している際に解決するためのルールを設定
     // 参考: http://qiita.com/ytanak/items/97ecc67786ed7c5557bb
@@ -105,7 +108,7 @@ lazy val batch = Project(id = "scalatra", base = file("./scalatra"))
 /** Play Framework */
 lazy val messageApi = Project(id = "play", base = file("./play"))
   .enablePlugins(PlayScala)
-  .dependsOn(shared % AllConfigurations)
+  .dependsOn(shared)
   .settings(
     commonSettings,
     packageName in Universal := "scala-study-play",
@@ -121,7 +124,8 @@ lazy val gatling = Project(id = "gatling", base = file("./gatling"))
     scalaVersion := "2.12.11",
     scalafmtOnCompile in ThisBuild := true,
     libraryDependencies ++= Seq(
-      "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.3.1" % "test,it",
-      "io.gatling"            % "gatling-test-framework"    % "3.3.1" % "test,it"
-    )
+      "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.3.1",
+      "io.gatling" % "gatling-test-framework" % "3.3.1",
+      "com.typesafe.play" %% "play-json" % "2.8.1"
+    ).map(_ % "test,it")
   )

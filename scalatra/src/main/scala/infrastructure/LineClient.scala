@@ -14,7 +14,7 @@ class LineClient(ws: StandaloneWSClient) {
     ec: ExecutionContext,
     lineConfig: LineConfig
   ): Future[StandaloneWSRequest#Self#Response] =
-    ws.url(lineConfig.ReplyApiEndpoint)
+    ws.url(lineConfig.replyApiEndpoint)
       .withHttpHeaders(
         "Authorization" -> s"Bearer ${lineConfig.channelAccessToken}",
         "Content-Type" -> "application/json"
